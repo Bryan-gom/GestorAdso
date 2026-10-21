@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aprendiz;
 use Illuminate\Http\Request;
 
 class AprendizController extends Controller
 {
     /**
-     * Muestra el listado del recurso.
+     * Muestra el listado de aprendices paginado.
      */
     public function index()
     {
-        // Semana 2: sin BD; solo devolvemos la vista
-        return view('aprendices.index');
+        $aprendices = Aprendiz::latest()->paginate(10);
+        return view('aprendices.index', compact('aprendices'));
     }
 
     /**
-     * Muestra el formulario para crear un nuevo recurso.
+     * Muestra el formulario para crear un nuevo aprendiz.
      */
     public function create()
     {
@@ -24,51 +25,39 @@ class AprendizController extends Controller
     }
 
     /**
-     * Almacena un nuevo recurso en el almacenamiento (simulado en S2).
+     * Almacena un nuevo aprendiz en la base de datos con Eloquent.
      */
     public function store(Request $request)
     {
-        // Validación mínima (simulación de guardado)
         $data = $request->validate([
             'nombre' => ['required', 'string', 'max:120'],
-            'documento' => ['required', 'string', 'max:40'],
-            'correo' => ['required', 'email', 'max:120'],
+            'documento' => ['required', 'string', 'max:40', 'unique:aprendices,documento'],
+            'correo' => ['required', 'email', 'max:120', 'unique:aprendices,correo'],
+            'ficha_id' => ['nullable', 'integer'],
         ]);
 
-        // Aquí NO guardamos en BD (lo haremos en Semana 4 con Eloquent).
-        // Objetivo Semana 2: comprobar flujo ruta -> acción -> vista -> redirect.
+        Aprendiz::create($data);
+
         return redirect()->route('aprendices.index')
-            ->with('ok', 'Aprendiz recibido (simulado)');
+            ->with('ok', 'Aprendiz creado');
     }
 
-    /**
-     * Muestra el recurso especificado (no usado en Semana 2).
-     */
-    public function show(string $id)
+    public function show(Aprendiz $aprendiz)
     {
         abort(404);
     }
 
-    /**
-     * Muestra el formulario para editar el recurso especificado (no usado en Semana 2).
-     */
-    public function edit(string $id)
+    public function edit(Aprendiz $aprendiz)
     {
         abort(404);
     }
 
-    /**
-     * Actualiza el recurso especificado en el almacenamiento (no usado en Semana 2).
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Aprendiz $aprendiz)
     {
         abort(404);
     }
 
-    /**
-     * Elimina el recurso especificado del almacenamiento (no usado en Semana 2).
-     */
-    public function destroy(string $id)
+    public function destroy(Aprendiz $aprendiz)
     {
         abort(404);
     }

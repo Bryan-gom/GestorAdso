@@ -102,3 +102,15 @@ Listo. Abre tu navegador y entra a: [http://127.0.0.1:8000](http://127.0.0.1:800
   - `layouts/app.blade.php`: Plantilla maestra con navegación y mensajes de sesión.
   - `aprendices/index.blade.php`: Vista de listado con enlace dinámico `route('aprendices.create')`.
   - `aprendices/create.blade.php`: Formulario protegido con directiva `@csrf`.
+
+### Módulo: Aprendices (Semana 3 — Migraciones, Modelos, Seeders y Eloquent)
+- **Persistencia en Base de Datos:** MariaDB / MySQL.
+- **Migración:** `create_aprendices_table` (campos: `nombre`, `documento` único, `correo` único, `ficha_id` nullable, `timestamps`).
+- **Modelo Eloquent:** `App\Models\Aprendiz` con propiedad `$fillable`.
+- **Factory y Seeder:**
+  - `AprendizFactory`: Generación de datos de prueba colombianos con Faker.
+  - `AprendizSeeder`: Población inicial de 25 registros en `aprendices`.
+- **Paginación y Vistas:**
+  - Listado paginado a 10 registros por página (`paginate(10)`) con controles de navegación.
+  - Alta de registros con validación en servidor (`unique`, longitudes máximas) y mensajes de retroalimentación flash (`ok`).
+
