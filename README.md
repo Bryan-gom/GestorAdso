@@ -86,3 +86,19 @@ Listo. Abre tu navegador y entra a: [http://127.0.0.1:8000](http://127.0.0.1:800
 - **Centro:** Centro de la Tecnología de la Manufactura Avanzada (CTMA) — SENA Regional Antioquia
 - **Aprendiz:** Bryan Gómez
 - **Instructor:** Gustavo Bolaños
+
+---
+
+## Módulos Implementados
+
+### Módulo: Aprendices (Semana 2 — Routing y Controladores REST)
+- **Controlador:** `App\Http\Controllers\AprendizController`
+- **Rutas registradas (`Route::resource`):**
+  - `GET /aprendices` -> `aprendices.index` (Listado de aprendices)
+  - `GET /aprendices/create` -> `aprendices.create` (Formulario de nuevo aprendiz)
+  - `POST /aprendices` -> `aprendices.store` (Validación de request y simulación de registro con mensaje flash)
+- **Redirección raíz:** `Route::redirect('/', '/aprendices')`
+- **Plantillas Blade:**
+  - `layouts/app.blade.php`: Plantilla maestra con navegación y mensajes de sesión.
+  - `aprendices/index.blade.php`: Vista de listado con enlace dinámico `route('aprendices.create')`.
+  - `aprendices/create.blade.php`: Formulario protegido con directiva `@csrf`.
