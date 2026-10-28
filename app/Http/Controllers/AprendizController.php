@@ -4,61 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Models\Aprendiz;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreUpdateAprendizRequest;
 
 class AprendizController extends Controller
 {
-    /**
-     * Muestra el listado de aprendices paginado.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $aprendices = Aprendiz::latest()->paginate(10);
-        return view('aprendices.index', compact('aprendices'));
+        $q = $request->query('q');
+
+        $aprendices = Aprendiz::query()
+            ->when($q, function ($query) use ($q) {
+                $query->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('documento', 'like', "%{$q}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('aprendices.index', compact('aprendices', 'q'));
     }
 
-    /**
-     * Muestra el formulario para crear un nuevo aprendiz.
-     */
     public function create()
     {
-        return view('aprendices.create');
+        $aprendiz = new Aprendiz();
+        return view('aprendices.create', compact('aprendiz'));
     }
 
-    /**
-     * Almacena un nuevo aprendiz en la base de datos con Eloquent.
-     */
-    public function store(Request $request)
+    public function store(StoreUpdateAprendizRequest $request)
     {
-        $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:120'],
-            'documento' => ['required', 'string', 'max:40', 'unique:aprendices,documento'],
-            'correo' => ['required', 'email', 'max:120', 'unique:aprendices,correo'],
-            'ficha_id' => ['nullable', 'integer'],
-        ]);
-
-        Aprendiz::create($data);
-
-        return redirect()->route('aprendices.index')
-            ->with('ok', 'Aprendiz creado');
-    }
-
-    public function show(Aprendiz $aprendiz)
-    {
-        abort(404);
+        Aprendiz::create($request->validated());
+        return redirect()->route('aprendices.index')->with('ok', 'Aprendiz creado');
     }
 
     public function edit(Aprendiz $aprendiz)
     {
-        abort(404);
+        return view('aprendices.edit', compact('aprendiz'));
     }
 
-    public function update(Request $request, Aprendiz $aprendiz)
+    public function update(StoreUpdateAprendizRequest $request, Aprendiz $aprendiz)
     {
-        abort(404);
+        $aprendiz->update($request->validated());
+        return redirect()->route('aprendices.index')->with('ok', 'Aprendiz actualizado');
     }
 
     public function destroy(Aprendiz $aprendiz)
     {
-        abort(404);
+        $aprendiz->delete();
+        return redirect()->route('aprendices.index')->with('ok', 'Aprendiz eliminado');
     }
 }
